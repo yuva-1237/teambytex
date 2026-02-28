@@ -108,6 +108,9 @@ Healthcare data requires the highest level of protection:
 * **Compliance:** Built with HIPAA/GDPR standards in mind.
 * **Backup:** Regular automated backups and disaster recovery protocols.
 
+---
+
+
 # 🚀 TEAM BYTEX
 
 A high-performance solution built with precision. While we integrate industry-standard verification, the soul of this project is **100% custom-engineered**.
