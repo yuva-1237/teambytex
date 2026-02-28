@@ -114,7 +114,7 @@ Healthcare data requires the highest level of protection:
 
 1. **Clone the repo:**
    ```bash
-   git clone [https://github.com/yourusername/hospital-workflow-automation.git](https://github.com/yourusername/hospital-workflow-automation.git)
+   git clone https://github.com/yuva-1237/teambytex.git
 Install dependencies:
 
 Bash
