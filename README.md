@@ -97,7 +97,7 @@ The system is built with a modular approach for high availability:
 * **Database:** PostgreSQL / MySQL / MongoDB
 * **API:** RESTful APIs
 * **Auth:** JWT (JSON Web Tokens) / OAuth 2.0
-* **Hosting:** AWS / Azure / Google Cloud (GCP)
+* **Hosting:** Vercel and Lovable
 
 ---
 
