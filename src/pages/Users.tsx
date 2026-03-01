@@ -6,6 +6,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
+import { useAuth } from "@/hooks/useAuth";
+import { Input } from "@/components/ui/input";
 
 interface UserRow {
   user_id: string;
@@ -19,8 +21,10 @@ interface UserRow {
 interface Department { id: string; name: string }
 
 export default function Users() {
+  const { role } = useAuth();
   const [users, setUsers] = useState<UserRow[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => { fetchData(); }, []);
 
@@ -65,11 +69,24 @@ export default function Users() {
 
   const deptName = (id: string | null) => departments.find((d) => d.id === id)?.name || "Unassigned";
 
+  const filteredUsers = users.filter((u) =>
+    (u.full_name || "").toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold">User Management</h1>
-        <p className="text-sm text-muted-foreground">{users.length} users</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">User Management</h1>
+          <p className="text-sm text-muted-foreground">{filteredUsers.length} users</p>
+        </div>
+        <div className="w-full sm:w-72">
+          <Input 
+            placeholder="Search users by name..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </div>
       </div>
 
       <Card>
@@ -85,7 +102,7 @@ export default function Users() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {users.map((u) => (
+              {filteredUsers.map((u) => (
                 <TableRow key={u.user_id}>
                   <TableCell className="font-medium">{u.full_name || "Unnamed"}</TableCell>
                   <TableCell>

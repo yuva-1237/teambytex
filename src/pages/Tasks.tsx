@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
-import { Plus, Upload, Paperclip } from "lucide-react";
+import { Plus, Upload, Paperclip, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 
 interface Task {
@@ -32,13 +32,14 @@ interface Department { id: string; name: string }
 interface Profile { user_id: string; full_name: string | null; department_id: string | null }
 
 export default function Tasks() {
-  const { user, departmentId } = useAuth();
+  const { user, departmentId, role } = useAuth();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [users, setUsers] = useState<Profile[]>([]);
   const [open, setOpen] = useState(false);
   const [statusFilter, setStatusFilter] = useState("all");
   const [priorityFilter, setPriorityFilter] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [detailTask, setDetailTask] = useState<Task | null>(null);
 
   // Form state
@@ -116,9 +117,27 @@ export default function Tasks() {
     else { toast.success("Status updated"); fetchData(); }
   };
 
+  const handleDelete = async (taskId: string) => {
+    if (role !== "admin") {
+      toast.error("Unauthorized: Only admins can delete tasks");
+      return;
+    }
+    if (!window.confirm("Are you sure you want to delete this task?")) return;
+    
+    const { error } = await supabase.from("tasks").delete().eq("id", taskId);
+    if (error) {
+      toast.error(error.message);
+    } else {
+      toast.success("Task deleted successfully");
+      fetchData();
+      if (detailTask?.id === taskId) setDetailTask(null);
+    }
+  };
+
   const filtered = tasks.filter((t) => {
     if (statusFilter !== "all" && t.status !== statusFilter) return false;
     if (priorityFilter !== "all" && t.priority !== priorityFilter) return false;
+    if (searchQuery && !t.title.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
   });
 
@@ -135,19 +154,27 @@ export default function Tasks() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">Tasks</h1>
           <p className="text-sm text-muted-foreground">{filtered.length} tasks</p>
         </div>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild>
-            <Button><Plus className="mr-2 h-4 w-4" />New Task</Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-lg">
-            <DialogHeader>
-              <DialogTitle>Create Task</DialogTitle>
-            </DialogHeader>
+        
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <Input 
+            placeholder="Search tasks by title..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full sm:w-72"
+          />
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button><Plus className="mr-2 h-4 w-4" />New Task</Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-lg">
+              <DialogHeader>
+                <DialogTitle>Create Task</DialogTitle>
+              </DialogHeader>
             <form onSubmit={handleCreate} className="space-y-4">
               <div className="space-y-2">
                 <Label>Title</Label>
@@ -210,6 +237,7 @@ export default function Tasks() {
             </form>
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       {/* Filters */}
@@ -265,14 +293,27 @@ export default function Tasks() {
                     <TableCell className="text-sm">{userName(t.assigned_to_user)}</TableCell>
                     <TableCell className="text-sm">{t.due_date ? format(new Date(t.due_date), "MMM d, yyyy") : "—"}</TableCell>
                     <TableCell onClick={(e) => e.stopPropagation()}>
-                      <Select value={t.status} onValueChange={(v) => updateStatus(t.id, v)}>
-                        <SelectTrigger className="h-7 w-28 text-xs"><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="pending">Pending</SelectItem>
-                          <SelectItem value="in_progress">In Progress</SelectItem>
-                          <SelectItem value="completed">Completed</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <div className="flex items-center gap-2">
+                        <Select value={t.status} onValueChange={(v) => updateStatus(t.id, v)}>
+                          <SelectTrigger className="h-7 w-28 text-xs"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pending">Pending</SelectItem>
+                            <SelectItem value="in_progress">In Progress</SelectItem>
+                            <SelectItem value="completed">Completed</SelectItem>
+                          </SelectContent>
+                        </Select>
+                        {role === "admin" && (
+                          <Button 
+                            variant="destructive" 
+                            size="icon" 
+                            className="h-7 w-7" 
+                            onClick={(e) => { e.stopPropagation(); handleDelete(t.id); }}
+                            title="Delete Task"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))

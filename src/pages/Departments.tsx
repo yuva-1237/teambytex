@@ -17,6 +17,7 @@ export default function Departments() {
   const [departments, setDepartments] = useState<Department[]>([]);
   const [open, setOpen] = useState(false);
   const [name, setName] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [editDept, setEditDept] = useState<Department | null>(null);
 
   useEffect(() => { fetchDepartments(); }, []);
@@ -59,23 +60,36 @@ export default function Departments() {
     });
   }, []);
 
+  const filteredDepartments = departments.filter((d) =>
+    d.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">Departments</h1>
-          <p className="text-sm text-muted-foreground">{departments.length} departments</p>
+          <p className="text-sm text-muted-foreground">{filteredDepartments.length} departments</p>
         </div>
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogTrigger asChild><Button><Plus className="mr-2 h-4 w-4" />Add Department</Button></DialogTrigger>
-          <DialogContent>
-            <DialogHeader><DialogTitle>New Department</DialogTitle></DialogHeader>
-            <form onSubmit={handleCreate} className="space-y-4">
-              <div className="space-y-2"><Label>Name</Label><Input value={name} onChange={(e) => setName(e.target.value)} required /></div>
-              <Button type="submit" className="w-full">Create</Button>
-            </form>
-          </DialogContent>
-        </Dialog>
+        
+        <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+          <Input 
+            placeholder="Search departments..." 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full sm:w-72"
+          />
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild><Button><Plus className="mr-2 h-4 w-4" />Add Department</Button></DialogTrigger>
+            <DialogContent>
+              <DialogHeader><DialogTitle>New Department</DialogTitle></DialogHeader>
+              <form onSubmit={handleCreate} className="space-y-4">
+                <div className="space-y-2"><Label>Name</Label><Input value={name} onChange={(e) => setName(e.target.value)} required /></div>
+                <Button type="submit" className="w-full">Create</Button>
+              </form>
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       <Card>
@@ -90,7 +104,7 @@ export default function Departments() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {departments.map((d) => (
+              {filteredDepartments.map((d) => (
                 <TableRow key={d.id}>
                   <TableCell className="font-medium">{d.name}</TableCell>
                   <TableCell>{userCounts[d.id] || 0}</TableCell>
