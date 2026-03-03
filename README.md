@@ -46,8 +46,6 @@ Manual hospital workflows often face:
 
 ### 1. Request Creation Module
 Enables patients or staff to generate tickets with specific metadata:
-* **Types:** Billing, Lab Tests, Pharmacy, Maintenance, Medical Records.
-* **Attributes:** Patient ID, Department, Request Type, Priority Level, and Description.
 
 ### 2. Intelligent Workflow Engine
 The core logic layer that:
@@ -63,7 +61,7 @@ Every request is assigned a unique **Tracking ID**.
 
 ### 4. Automated Notifications
 Real-time alerts triggered by status changes or approaching deadlines via:
-* **SMS / Email**
+* **Email**
 * **Internal Dashboard Alerts**
 
 ### 5. Audit Trail & Logs
