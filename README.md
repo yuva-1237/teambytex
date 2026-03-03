@@ -90,7 +90,7 @@ The system is built with a modular approach for high availability:
 
 
 ## 💻 Tech Stack
-* **Backend:** Node.js (Express) / Python (Django/Flask) / Java Spring Boot
+* **Backend:** Node.js (Express) / Typescript / Next.js
 * **Database:** PostgreSQL / MySQL / MongoDB
 * **API:** RESTful APIs
 * **Auth:** JWT (JSON Web Tokens) / OAuth 2.0
