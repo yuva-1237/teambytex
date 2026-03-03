@@ -1,7 +1,7 @@
 # Hospital Inter-Department Workflow Automation System (IDWAS)
 
 ![Status](https://img.shields.io/badge/Project%20Status-Active-brightgreen)
-![Backend](https://img.shields.io/badge/Backend-Node.js%20%7C%20Python%20%7C%20Java-blue)
+![Backend](https://img.shields.io/badge/Backend-Node.js%20%7C%20Typescript%20%7C%20Next.js-blue)
 ![Database](https://img.shields.io/badge/Database-PostgreSQL%20%7C%20MongoDB-green)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
