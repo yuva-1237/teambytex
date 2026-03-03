@@ -51,9 +51,6 @@ Enables patients or staff to generate tickets with specific metadata:
 
 ### 2. Intelligent Workflow Engine
 The core logic layer that:
-* Routes **Lab requests** to the Laboratory Dept.
-* Routes **Billing issues** to the Finance Dept.
-* Triggers **immediate escalation** for high-priority/emergency cases.
 * Assigns tasks to specific staff members based on availability or specialization.
 
 
